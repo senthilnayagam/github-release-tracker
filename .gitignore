@@ -1,3 +1,7 @@
+# local changes due to the script
+cache/**/*
+repositories.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
