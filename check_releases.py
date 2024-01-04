@@ -19,6 +19,9 @@ def parse_github_url(url):
     return None, None
 
 def read_repos_from_file(file_path):
+    if not os.path.exists(file_path):
+        print(f"The file '{file_path}' does not exist. Please create it and add GitHub repository URLs into it.")
+        return []
     with open(file_path, 'r') as file:
         return [line.strip() for line in file]
 
