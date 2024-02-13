@@ -1,7 +1,10 @@
 import requests
 import json
 import os
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse
+from datetime import datetime
+import pytz
+
 
 def get_latest_release_info(github_user, repo_name):
     api_url = f"https://api.github.com/repos/{github_user}/{repo_name}/releases/latest"
@@ -39,6 +42,21 @@ def save_cache_data(cache_folder, user, repo, data):
     with open(cache_path, 'w') as file:
         json.dump(data, file, indent=4)
 
+# format date to a more readable format
+# "2023-10-06T13:39:06Z"  to X hours ago or Y days ago or Z months ago 
+def date_format(date_string):
+    now = datetime.now(pytz.UTC)
+    date = datetime.fromisoformat(date_string[:-1])
+    date = date.astimezone(pytz.UTC)
+    diff = now - date
+    if diff.days > 30:
+        return f"{diff.days//30} months ago"
+    elif diff.days > 0:
+        return f"{diff.days} days ago"
+    else:
+        return f"{diff.seconds//3600} hours ago"
+
+
 def main():
     repo_file = 'repositories.txt'  # Replace with your file path
     cache_folder = 'cache'           # Main cache folder
@@ -49,7 +67,7 @@ def main():
             cached_data = load_cached_data(cache_folder, user, name)
             tag, date = get_latest_release_info(user, name)
             if tag:
-                print(f"{user}/{name} Latest Release: {tag} at {date}")
+                print(f"{user}/{name} Latest Release: {tag} at {date_format(date)}")
                 if cached_data.get('tag') != tag:
                     print(f"Update found for {user}/{name}: {tag}")
                     print(f"{url}")
