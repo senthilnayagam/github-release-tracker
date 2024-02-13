@@ -52,6 +52,7 @@ def main():
                 print(f"{user}/{name} Latest Release: {tag} at {date}")
                 if cached_data.get('tag') != tag:
                     print(f"Update found for {user}/{name}: {tag}")
+                    print(f"{url}")
                 save_cache_data(cache_folder, user, name, {'tag': tag, 'date': date})
 
 if __name__ == "__main__":
