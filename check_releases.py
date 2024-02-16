@@ -47,7 +47,8 @@ def save_cache_data(cache_folder, user, repo, data):
 def date_format(date_string):
     now = datetime.now(pytz.UTC)
     date = datetime.fromisoformat(date_string[:-1])
-    date = date.astimezone(pytz.UTC)
+    #date = date.astimezone(pytz.UTC)
+    date = date.replace(tzinfo=pytz.UTC)  # Set timezone to UTC
     diff = now - date
     if diff.days > 30:
         return f"{diff.days//30} months ago"
