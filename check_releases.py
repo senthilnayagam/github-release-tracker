@@ -8,11 +8,21 @@ import pytz
 
 def get_latest_release_info(github_user, repo_name):
     api_url = f"https://api.github.com/repos/{github_user}/{repo_name}/releases/latest"
-    response = requests.get(api_url)
+    # add user agent to avoid 403 error
+    # add api version to and authorization to avoid 403 error
+    headers = {'User-Agent': 'senthilnayagam'}
+    response = requests.get(api_url, headers=headers)
+    print(api_url)
     if response.status_code == 200:
         data = response.json()
+        print(data.get('tag_name'), data.get('published_at'))
         return data.get('tag_name'), data.get('published_at')
-    return None, None
+    elif response.status_code == 404:
+        print(f"Repository {github_user}/{repo_name} not found")
+        return None, None
+    else:
+        print(f"Failed to get release info for {github_user}/{repo_name}. Status code: {response.status_code}")
+        return None, None
 
 def parse_github_url(url):
     path = urlparse(url).path
