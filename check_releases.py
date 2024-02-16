@@ -61,18 +61,28 @@ def date_format(date_string):
 def main():
     repo_file = 'repositories.txt'  # Replace with your file path
     cache_folder = 'cache'           # Main cache folder
+    # print header
+    header = f"| repo: | Latest Release:  | date:  |"
+    print("-" * len(header))
+    print(header)
 
     for url in read_repos_from_file(repo_file):
-        user, name = parse_github_url(url)
-        if user and name:
-            cached_data = load_cached_data(cache_folder, user, name)
-            tag, date = get_latest_release_info(user, name)
+        #print(url)
+        user, repo = parse_github_url(url)
+        #print(f"Checking {user}/{name} ")
+       
+        if user and repo:
+            cached_data = load_cached_data(cache_folder, user, repo)
+            tag, date = get_latest_release_info(user, repo)
             if tag:
-                print(f"{user}/{name} Latest Release: {tag} at {date_format(date)}")
+                # print it inside a terminal in tabular format
+                response =f"| repo: {user}/{repo} | Latest Release: {tag} | date: {date_format(date)} |"
+                print("-" * len(response))
+                print(response)
                 if cached_data.get('tag') != tag:
-                    print(f"Update found for {user}/{name}: {tag}")
+                    print(f"Update found for {user}/{repo}: {tag}")
                     print(f"{url}")
-                save_cache_data(cache_folder, user, name, {'tag': tag, 'date': date})
+                save_cache_data(cache_folder, user, repo, {'tag': tag, 'date': date})
 
 if __name__ == "__main__":
     main()
